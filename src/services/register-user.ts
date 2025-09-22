@@ -1,6 +1,7 @@
-import { prisma } from '@/lib/prisma'
+import { UsersRepository } from '@/repositories/users-repository'
 
 import { hash } from 'bcryptjs'
+import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 
 interface RegisterUseCaseRequest {
   name: 'string'
@@ -9,23 +10,18 @@ interface RegisterUseCaseRequest {
 }
 
 export class RegisterUseCase {
-  constructor(private userRepository: any) {}
+  constructor(private userRepository: UsersRepository) {}
 
   async execute({ name, email, password }: RegisterUseCaseRequest) {
     const password_hash = await hash(password, 6) // utilizando (hash) para criar 1 salt que seria uma coisa unica ou seja a senha do usuario seja unica, e como ele espera uma promess, eu posso esta usando o await para esperar uma promessa
 
-    const userWithSameEmail = await prisma.user.findUnique({
-      // usando findUnique para informar 1 registro unico, nesse caso ele vai busca emails ja cadastrados, ele  tmb vai fazer 1 varredura se tem emails cadastrado ou IDs ele. busca essas 2 informacoes
-      where: {
-        email,
-      },
-    })
+    const userWithSameEmail = await this.userRepository.findByEmail(email)
 
     if (userWithSameEmail) {
-      throw new Error('E-mail already exists.')
+      throw new UserAlreadyExistsError()
     }
 
-    //const prismaUsersRepository = new PrismaUsersRepository()
+    // const prismaUsersRepository = new PrismaUsersRepository()
 
     await this.userRepository.create({
       name,
