@@ -22,7 +22,7 @@ export class RegisterUseCase {
     email,
     password,
   }: RegisterUseCaseRequest): Promise<RegisterUseCaseresponse> {
-    const password_hash = await hash(password, 6) // utilizando (hash) para criar 1 salt que seria uma coisa unica ou seja a senha do usuario seja unica, e como ele espera uma promess, eu posso esta usando o await para esperar uma promessa
+    const passwordHash = await hash(password, 12)
 
     const userWithSameEmail = await this.userRepository.findByEmail(email)
 
@@ -30,13 +30,12 @@ export class RegisterUseCase {
       throw new UserAlreadyExistsError()
     }
 
-    // const prismaUsersRepository = new PrismaUsersRepository()
-
     const user = await this.userRepository.create({
       name,
       email,
-      password_hash,
+      password_hash: passwordHash,
     })
+
     return {
       user,
     }
