@@ -156,6 +156,6 @@ O mais legal é que o projeto não fica só na teoria: ele simula uma situação
 
 Em resumo, esse projeto me ajudou a entender melhor como pensar em soluções mais limpas, escaláveis e preparadas para crescer.
 
-## Autor
+## Licença
 
-Fábio Lins
+Este projeto está sob a licença ISC.
